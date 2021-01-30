@@ -9,8 +9,8 @@
         @input="handleInput"
       />
       <ul>
-         <li v-for="item in results" :key="item.data[0].nasa_id">
-           <p>{{ item }}</p>
+         <li v-for="elm in results" :key="elm.data[0].nasa_id">
+           <p>{{ elm.data[0].description }}</p>
          </li>
       </ul>
     </div>
@@ -32,10 +32,11 @@ export default {
     };
   },
   methods: {
-    handleInput: debounce(function () {
+    // eslint-disable-next-line
+    handleInput: debounce(function() {
       axios.get(`${API}?q=${this.searchValue}&media_type=image`)
         .then((res) => {
-          console.log(res.data.collection.items);
+          this.results = res.data.collection.items;
         })
         .catch((err) => {
           console.log(err);

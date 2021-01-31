@@ -1,9 +1,21 @@
 <template>
   <div class="app">
-    <div class="wrapper">
-      <BackImage />
-      <Claim />
-      <SearchInput v-model="searchValue" @input="handleInput" />
+    <div :class="[{ flexStart: step == 1 }, 'wrapper']">
+      <transition name="slide">
+        <span class="logo" v-if="step == 1">SPACER</span>
+      </transition>
+      <transition name="fade">
+        <BackImage v-if="step == 0" />
+      </transition>
+      <Claim v-if="step == 0" />
+      <SearchInput
+        v-model="searchValue"
+        @input="handleInput"
+        :dark="step == 1"
+      />
+      <div class="results" v-if="results && !loading && step == 1">
+        <Item v-for="item in results" :item="item" :key="item.data[0].nasa_id" />
+      </div>
     </div>
   </div>
 </template>
@@ -12,6 +24,7 @@
 import Claim from '@/components/Claim.vue';
 import SearchInput from '@/components/SearchInput.vue';
 import BackImage from '@/components/BackImage.vue';
+import Item from '@/components/Item.vue';
 import axios from 'axios';
 import debounce from 'lodash.debounce';
 
@@ -22,21 +35,27 @@ export default {
     Claim,
     SearchInput,
     BackImage,
+    Item,
   },
   name: 'App',
   data() {
     return {
       searchValue: '',
       results: [],
+      loading: false,
+      step: 0,
     };
   },
   methods: {
     // eslint-disable-next-line
     handleInput: debounce(function() {
-      console.log(this.searchValue);
+      this.loading = true;
       axios.get(`${API}?q=${this.searchValue}&media_type=image`)
         .then((res) => {
+          this.loading = false;
+          this.step = 1;
           this.results = res.data.collection.items;
+          console.log(res.data.collection.items);
         })
         .catch((err) => {
           console.log(err);
@@ -60,7 +79,24 @@ export default {
     border: 0;
   }
 
+  .fade-enter-active, .fade-leave-active{
+    transition: opacity .2s;
+  }
+
+  .fade-enter, .fade-leave-to{
+    opacity: 0;
+  }
+
+  .slide-enter-active, .slide-leave-active{
+    transition: margin-top .4s ease;
+  }
+
+  .slide-enter, .slide-leave-to{
+    margin-top: -50px;
+  }
+
   .wrapper{
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -70,5 +106,33 @@ export default {
     min-height: 100vh;
     margin: 0;
     padding: 30px;
+
+    .logo{
+      position: absolute;
+      top: 30px;
+      width: 100px;
+      text-align: center;
+      color: black;
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    &.flexStart{
+      justify-content: flex-start;
+    }
+
+    .results{
+      margin-top: 100px;
+      width: fit-content;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      column-gap: 30px;
+      row-gap: 30px;
+      // transform: translateX(-60px);
+
+      @media (min-width: 768px){
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+      }
+    }
   }
 </style>

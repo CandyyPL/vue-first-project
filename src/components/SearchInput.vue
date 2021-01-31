@@ -3,7 +3,8 @@
     id="search"
     name="search"
     autocomplete="off"
-    placeholder="e.g. Moon"
+    placeholder="e.g. moon"
+    :class="{ dark }"
     :value="value"
     @input="handleInput"
   />
@@ -16,6 +17,10 @@ export default {
     value: {
       type: String,
       required: true,
+    },
+    dark: {
+      type: Boolean,
+      default: false,
     },
   },
   methods: {
@@ -51,6 +56,19 @@ export default {
 
     &::placeholder{
       color: #ddd;
+    }
+  }
+
+  .dark{
+    border-bottom-color: #333;
+    color: #111;
+
+    &:focus{
+      box-shadow: 0 12px 20px -8px rgba(0, 0, 0, .6);
+
+      &::placeholder{
+        color: transparent;
+      }
     }
   }
 </style>

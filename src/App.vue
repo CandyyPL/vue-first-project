@@ -14,8 +14,14 @@
         :dark="step == 1"
       />
       <div class="results" v-if="results && !loading && step == 1">
-        <Item v-for="item in results" :item="item" :key="item.data[0].nasa_id" />
+        <Item
+          v-for="item in results"
+          :item="item"
+          :key="item.data[0].nasa_id"
+          @click.native="handleModalOpen(item)"
+        />
       </div>
+      <Modal v-if="modalOpen" @closeModal="modalOpen = false" />
     </div>
   </div>
 </template>
@@ -25,6 +31,7 @@ import Claim from '@/components/Claim.vue';
 import SearchInput from '@/components/SearchInput.vue';
 import BackImage from '@/components/BackImage.vue';
 import Item from '@/components/Item.vue';
+import Modal from '@/components/Modal.vue';
 import axios from 'axios';
 import debounce from 'lodash.debounce';
 
@@ -36,10 +43,12 @@ export default {
     SearchInput,
     BackImage,
     Item,
+    Modal,
   },
   name: 'App',
   data() {
     return {
+      modalOpen: false,
       searchValue: '',
       results: [],
       loading: false,
@@ -47,6 +56,10 @@ export default {
     };
   },
   methods: {
+    handleModalOpen(item) {
+      this.modalOpen = true;
+      console.log(item);
+    },
     // eslint-disable-next-line
     handleInput: debounce(function() {
       this.loading = true;

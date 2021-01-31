@@ -1,17 +1,19 @@
 <template>
   <div class="app">
     <div class="wrapper">
+      <BackImage />
       <Claim />
-      <SearchInput />
+      <SearchInput v-model="searchValue" @input="handleInput" />
     </div>
   </div>
 </template>
 
 <script>
-import axios from 'axios';
-import debounce from 'lodash.debounce';
 import Claim from '@/components/Claim.vue';
 import SearchInput from '@/components/SearchInput.vue';
+import BackImage from '@/components/BackImage.vue';
+import axios from 'axios';
+import debounce from 'lodash.debounce';
 
 const API = 'https://images-api.nasa.gov/search';
 
@@ -19,8 +21,9 @@ export default {
   components: {
     Claim,
     SearchInput,
+    BackImage,
   },
-  name: 'Search',
+  name: 'App',
   data() {
     return {
       searchValue: '',
@@ -30,6 +33,7 @@ export default {
   methods: {
     // eslint-disable-next-line
     handleInput: debounce(function() {
+      console.log(this.searchValue);
       axios.get(`${API}?q=${this.searchValue}&media_type=image`)
         .then((res) => {
           this.results = res.data.collection.items;
@@ -63,10 +67,8 @@ export default {
     justify-content: center;
     width: 100%;
     height: 100vh;
+    min-height: 100vh;
     margin: 0;
     padding: 30px;
-    background-image: url('../assets/background.jpg');
-    background-repeat: no-repeat;
-    background-size: cover;
   }
 </style>

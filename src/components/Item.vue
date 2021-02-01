@@ -15,7 +15,6 @@ export default {
     return {
       photo: this.item.links[0].href,
       title: this.item.data[0].title,
-
     };
   },
   computed: {

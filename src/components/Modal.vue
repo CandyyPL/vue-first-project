@@ -2,16 +2,12 @@
   <div class="outerWrapper">
     <div class="innerWrapper">
       <div class="photo">
-        <img src="https://images-assets.nasa.gov/image/PIA12235/PIA12235~thumb.jpg">
+        <img :src="photo">
       </div>
       <div class="description">
-        <h2 class="title">Lorem ipsum</h2>
+        <h2 class="title">{{ title }}</h2>
         <p class="desc">
-          Lorem ipsum, dolor sit amet consectetur adipisicing elit.
-          Aliquid, aperiam. Quidem doloribus dolorem facilis.
-          Minus eos repudiandae in qui eaque? Velit perspiciatis ea
-          sapiente sunt, itaque dolores minima praesentium, iusto,
-          tempore ullam veritatis suscipit beatae.
+          {{ description }}
         </p>
       </div>
     </div>
@@ -22,6 +18,24 @@
 <script>
 export default {
   name: 'Modal',
+  props: {
+    item: {
+      type: Object,
+      required: true,
+    },
+  },
+  data() {
+    return {
+      photo: null,
+      title: null,
+      description: null,
+    };
+  },
+  mounted() {
+    this.photo = this.item.links[0].href;
+    this.title = this.item.data[0].title;
+    this.description = this.item.data[0].description;
+  },
 };
 </script>
 
@@ -33,11 +47,12 @@ export default {
     position: fixed;
     top: 0;
     left: 0;
+    border: 2px solid black;
     border-radius: 5px;
 
     @media (min-width: 1024px){
       max-width: 70%;
-      height: 60%;
+      height: fit-content;
       left: 0;
       right: 0;
       top: 0;
@@ -100,8 +115,12 @@ export default {
       height: auto;
 
       img{
-        width: 100%;
+        width: 80%;
       }
+    }
+
+    .description{
+      min-width: 40%;
     }
   }
 </style>
